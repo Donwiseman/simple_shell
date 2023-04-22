@@ -19,14 +19,11 @@
 /* Points to an array of pointers to strings called the "environment" */
 extern char **environ;
 
+char **token(char *buffer);
+void errors(char *format);
+void env(void);
+int _getline(unsigned int fd, char *buffer, size_t bytes);
+int cd(char *pathh);
+char *path(char *filename);
 
-/**
- * struct data - struct that contains all relevant data on runtime
- * @av: argument vector
- * @input: command line written by the user
- * @args: tokens of the command line
- * @status: last status of the shell
- * @counter: lines counter
- * @_environ: environment variable
- * @pid: process ID of the shell
- */
+#endif
