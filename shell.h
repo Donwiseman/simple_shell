@@ -20,6 +20,7 @@
 extern char **environ;
 
 char **token(char *buffer);
+void free_arg(char **argv);
 void errors(char *format);
 void env(void);
 int _getline(unsigned int fd, char *buffer, size_t bytes);
