@@ -61,7 +61,7 @@ unsigned int tok_num(char *buffer)
  * token - splits a string into tokens using ' ' as delimiter
  * @buffer: string to be splitted into tokens
  *
- * Return: returns a null terminated array of extracted tokens
+ * Return: returns a null terminated array of extracted tokens or NULL;
  */
 char **token(char *buffer)
 {
@@ -71,6 +71,8 @@ char **token(char *buffer)
 
 	num = tok_num(buffer);
 	argv = (char **) malloc((num + 1) * sizeof(char *));
+	if (argv == NULL)
+		return (NULL);
 	for (x = 0; x < num; x++)
 	{
 		count = 0;
@@ -90,6 +92,11 @@ char **token(char *buffer)
 		buf[count] = '\0';
 		len = count + 1;
 		argv[x] = (char *) malloc(len * sizeof(char));
+		if (argv[x] == NULL)
+		{
+			free_arg(argv);
+			return (NULL);
+		}
 		_strcpy(argv[x], buf);
 		p++;
 	}
