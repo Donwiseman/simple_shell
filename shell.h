@@ -21,8 +21,14 @@ extern char **environ;
 
 char **token(char *buffer);
 void free_arg(char **argv);
-void errors(char *format);
 void env(void);
+
+/* errors.c */
+void errors(char *format);
+int _errorcha(char);
+int _writefd(char c, int fd);
+int _writesfd(char *str, int fd);
+
 int _getline(unsigned int fd, char *buffer, size_t bytes);
 int cd(char *path);
 char *path(char *filename);
