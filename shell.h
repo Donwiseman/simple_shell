@@ -30,7 +30,14 @@ int _writefd(char c, int fd);
 int _writesfd(char *str, int fd);
 
 int _getline(unsigned int fd, char *buffer, size_t bytes);
+
+/* cd.c */
+void cd_dotted(char *path);
+void cd_to_dir(char *path);
+void cd_previous_dir(char *path);
+void cd_to_home(char *path);
 int cd(char *path);
+
 char *path(char *filename);
 
 #endif
