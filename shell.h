@@ -16,6 +16,7 @@
 #define TOK_BUFSIZE 128
 #define TOK_DELIM " \t\r\n\a"
 
+
 /* Points to an array of pointers to strings called the "environment" */
 extern char **environ;
 
@@ -31,11 +32,9 @@ int _writesfd(char *str, int fd);
 
 int _getline(unsigned int fd, char *buffer, size_t bytes);
 
+/* envrn.c */
+
 /* cd.c */
-void cd_dotted(char *path);
-void cd_to_dir(char *path);
-void cd_previous_dir(char *path);
-void cd_to_home(char *path);
 int cd(char *path);
 
 char *path(char *filename);
