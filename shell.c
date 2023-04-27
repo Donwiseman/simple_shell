@@ -85,7 +85,7 @@ int main(int ac, char **av)
 {
 	char **argv, buf[BUFSIZE], *sh_name = av[0];
 	char *buffer = buf;
-	unsigned int count = 0, feed;
+	unsigned int count = 0, feed, is_term = 1;
 	size_t n = BUFSIZE;
 
 	if (ac > 1)
@@ -93,9 +93,12 @@ int main(int ac, char **av)
 		errors(sh_name, av[1], count);
 		exit(EXIT_FAILURE);
 	}
-	while (1)
+	while (is_term)
 	{
-		write(STDOUT_FILENO, "$ ", 2);
+		if ((isatty(STDIN_FILENO)) == 0)
+			is_term = 0;
+		else
+			write(STDOUT_FILENO, "$ ", 2);
 		if ((getline(&buffer, &n, stdin)) < 1)
 			continue;
 		argv = token(buffer);
@@ -105,20 +108,19 @@ int main(int ac, char **av)
 		{
 			feed = special_case(sh_name, argv, ++count);
 			if (feed == 2)
+			{
+				free_arg(argv);
 				break;
+			}
 			else if (feed == 1)
 			{
 				free_arg(argv);
 				continue;
 			}
-			/*no function/program executed and only the path used*/
 			count--;
 		}
 		execute_command(sh_name, argv, ++count);
-		if ((isatty(STDIN_FILENO)) == 0)
-			break;
 		free_arg(argv);
 	}
-	free_arg(argv);
 	return (0);
 }
