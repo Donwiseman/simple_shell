@@ -19,23 +19,12 @@
 
 /* Points to an array of pointers to strings called the "environment" */
 extern char **environ;
-
 char **token(char *buffer);
 void free_arg(char **argv);
 void env(void);
-
-/* errors.c */
 void errors(char *sh_name, char *command, unsigned int count);
-int _writefd(char c, int fd);
-int _writesfd(char *str, int fd);
-
 int _getline(unsigned int fd, char *buffer, size_t bytes);
-
-/* envrn.c */
-
-/* cd.c */
 int cd(char *path);
-
 char *path(char *filename);
 int _strncmp(char *s1, char *s2, int n);
 
