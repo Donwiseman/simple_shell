@@ -107,7 +107,10 @@ int main(int ac, char **av)
 			if (feed == 2)
 				break;
 			else if (feed == 1)
+			{
+				free_arg(argv);
 				continue;
+			}
 			/*no function/program executed and only the path used*/
 			count--;
 		}
