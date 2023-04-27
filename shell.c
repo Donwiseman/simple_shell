@@ -83,8 +83,7 @@ int special_case(char *sh_name, char **argv, int count)
  */
 int main(int ac, char **av)
 {
-	char **argv, buf[BUFSIZE], *sh_name = av[0];
-	char *buffer = buf;
+	char **argv, buf[BUFSIZE], *sh_name = av[0], *buffer = buf;
 	unsigned int count = 0, feed, is_term = 1;
 	size_t n = BUFSIZE;
 
@@ -93,14 +92,12 @@ int main(int ac, char **av)
 		errors(sh_name, av[1], count);
 		exit(EXIT_FAILURE);
 	}
-	while (is_term)
+	if ((isatty(STDIN_FILENO)) == 0)
+		is_term = 0;
+	else
+		write(STDOUT_FILENO, "$ ", 2);
+	while ((getline(&buffer, &n, stdin)) != -1)
 	{
-		if ((isatty(STDIN_FILENO)) == 0)
-			is_term = 0;
-		else
-			write(STDOUT_FILENO, "$ ", 2);
-		if ((getline(&buffer, &n, stdin)) < 1)
-			continue;
 		argv = token(buffer);
 		if (argv == NULL)
 			continue;
@@ -121,6 +118,8 @@ int main(int ac, char **av)
 		}
 		execute_command(sh_name, argv, ++count);
 		free_arg(argv);
+		if (is_term)
+			write(STDOUT_FILENO, "$ ", 2);
 	}
 	return (0);
 }
