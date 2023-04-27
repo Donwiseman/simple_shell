@@ -70,6 +70,8 @@ char **token(char *buffer)
 	unsigned int num, x, len, count;
 
 	num = tok_num(buffer);
+	if (num == 0)
+		return (NULL);
 	argv = (char **) malloc((num + 1) * sizeof(char *));
 	if (argv == NULL)
 		return (NULL);
