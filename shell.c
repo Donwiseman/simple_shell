@@ -1,18 +1,28 @@
 #include "shell.h"
-#include <string.h>
+
+/**
+ * print_prompt - prints the shell prompt
+ * @is_term: indicative if it is interactive or non-interactive
+ */
+void print_prompt(int is_term)
+{
+	if (is_term)
+		write(STDOUT_FILENO, "$ ", 2);
+}
 
 /**
  * execute_command - executes a given program from the argument vector
  * @sh_name: name which the shell program was called
  * @argv: argument vector for the argument to be excuted
  * @count: the current count of the programs sthe shell has executed
+ * @stat: status returned from child process
  *
  * Return: 0 if no errors otherwise -1
  */
-int execute_command(char *sh_name, char **argv, unsigned int count)
+int execute_command(char *sh_name, char **argv, int count, int *stat)
 {
 	pid_t pid;
-	int status;
+	int wstatus;
 
 	pid = fork();
 	if (pid == -1)
@@ -30,9 +40,10 @@ int execute_command(char *sh_name, char **argv, unsigned int count)
 	}
 	else
 	{
-		wait(&status);
-		if (!WIFEXITED(status))
+		wait(&wstatus);
+		if (!WIFEXITED(wstatus))
 			return (-1);
+		*stat = WEXITSTATUS(wstatus);
 	}
 	return (0);
 }
@@ -49,17 +60,20 @@ int execute_command(char *sh_name, char **argv, unsigned int count)
 int special_case(char *sh_name, char **argv, int count)
 {
 	char *name;
+	data_shell datash = {sh_name, NULL, argv, 0, count};
 
 	if (_strncmp(argv[0], "exit", 5) == 0)
 		return (2);
-	/**
-	 * else if ((_strncmp(argv[0], "env", 4) == 0)
-	 * {env();
-	 * return (1);}
-	 * else if ((_strncmp(argv[0], "cd", 3) == 0)
-	 * {cd(argv[1]);
-	 * return (1);}
-	 */
+	else if (_strncmp(argv[0], "env", 4) == 0)
+	{
+		_env(&datash);
+		return (1);
+	}
+	else if (_strncmp(argv[0], "cd", 3) == 0)
+	{
+		cd_shell(&datash);
+		return (1);
+	}
 	name = path(argv[0]);
 	if (name == NULL)
 	{
@@ -84,7 +98,7 @@ int special_case(char *sh_name, char **argv, int count)
 int main(int ac, char **av)
 {
 	char **argv, *sh_name = av[0], *buffer = (char *) malloc(BUFSIZE);
-	unsigned int count = 0, feed, is_term = 1;
+	int count = 0, feed, is_term = 1, stat = 0;
 	size_t n = BUFSIZE;
 
 	if (ac > 1 || buffer == NULL)
@@ -112,15 +126,15 @@ int main(int ac, char **av)
 			else if (feed == 1)
 			{
 				free_arg(argv);
+				print_prompt(is_term);
 				continue;
 			}
 			count--;
 		}
-		execute_command(sh_name, argv, ++count);
+		execute_command(sh_name, argv, ++count, &stat);
 		free_arg(argv);
-		if (is_term)
-			write(STDOUT_FILENO, "$ ", 2);
+		print_prompt(is_term);
 	}
 	free(buffer);
-	return (0);
+	exit(stat);
 }

@@ -46,15 +46,11 @@ void cd_to_home(data_shell *datash);
 /* cd_shell.c */
 int cd_shell(data_shell *datash);
 
-
 /* Points to an array of pointers to strings called the "environment" */
 extern char **environ;
 char **token(char *buffer);
 void free_arg(char **argv);
-void env(void);
 void errors(char *sh_name, char *command, unsigned int count);
-int _getline(unsigned int fd, char *buffer, size_t bytes);
-int cd(char *path);
 char *path(char *filename);
 int _strncmp(char *s1, char *s2, int n);
 

@@ -1,6 +1,17 @@
 #include "shell.h"
 
 /**
+ * update_errno - updates the errno and returns NULL
+ *
+ * Return: returns NULL to the calling process
+ */
+char *update_errno(void)
+{
+	errno = ENOENT;
+	return (NULL);
+}
+
+/**
  *_strncmp - compares the value of two strings
  *@s1: main string in the comparison
  *@s2: string that is compared to the main string
@@ -89,22 +100,20 @@ char *str_concat(char *s1, char *s2)
  */
 char *path(char *filename)
 {
-	char *path = NULL, buf[TOK_BUFSIZE], *valid_path = NULL;
-	char *check = "PATH=";
-	unsigned int index, x;
+	char *path = NULL, buf[TOK_BUFSIZE], *valid_path = NULL, *tk = "PATH=";
+	unsigned int index = 5, x, count;
 	struct stat st;
 
-	for (index = 0; environ[index] != NULL; index++)
+	for (count = 0; (environ && environ[index] != NULL); count++)
 	{
-		if ((_strncmp(environ[index], check, 5) == 0))
+		if ((_strncmp(environ[count], tk, 5) == 0))
 		{
-			path = environ[index];
+			path = environ[count];
 			break;
 		}
 	}
 	if (path == NULL)
-		return (NULL);
-	index = 5;
+		return (update_errno());
 	while (path[index] != '\0')
 	{
 		x = 0;
@@ -128,5 +137,7 @@ char *path(char *filename)
 		free(valid_path);
 		valid_path = NULL;
 	}
+	if (valid_path == NULL)
+		errno = ENOENT;
 	return (valid_path);
 }
