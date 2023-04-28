@@ -89,7 +89,8 @@ char *str_concat(char *s1, char *s2)
  */
 char *path(char *filename)
 {
-	char *path, buf[TOK_BUFSIZE], *valid_path = NULL, *check = "PATH=";
+	char *path = NULL, buf[TOK_BUFSIZE], *valid_path = NULL;
+	char *check = "PATH=";
 	unsigned int index, x;
 	struct stat st;
 
@@ -101,6 +102,8 @@ char *path(char *filename)
 			break;
 		}
 	}
+	if (path == NULL)
+		return (NULL);
 	index = 5;
 	while (path[index] != '\0')
 	{
