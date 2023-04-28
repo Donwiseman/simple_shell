@@ -83,11 +83,11 @@ int special_case(char *sh_name, char **argv, int count)
  */
 int main(int ac, char **av)
 {
-	char **argv, buf[BUFSIZE], *sh_name = av[0], *buffer = buf;
+	char **argv, *sh_name = av[0], *buffer = (char *) malloc(BUFSIZE);
 	unsigned int count = 0, feed, is_term = 1;
 	size_t n = BUFSIZE;
 
-	if (ac > 1)
+	if (ac > 1 || buffer == NULL)
 	{
 		errors(sh_name, av[1], count);
 		exit(EXIT_FAILURE);
@@ -121,5 +121,6 @@ int main(int ac, char **av)
 		if (is_term)
 			write(STDOUT_FILENO, "$ ", 2);
 	}
+	free(buffer);
 	return (0);
 }
