@@ -28,13 +28,17 @@
  */
 typedef struct data
 {
-	char **av;
-	char *input;
-	char **args;
-	int status;
-	int counter;
+	char *av;
+	char *input
+	int _status;
+	int _counter;
 	char **_environ;
 	char *pid;
+	char *sh_name; /* name of the shell */
+        char *input_line; /* input line from the user */
+        char **args; /* array of arguments */
+        int interactive_mode; /* whether the shell is in interactive mode or not */
+        int cmd_count; /* count of the number of commands executed */
 } data_shell;
 
 /* envrn1.c  */
