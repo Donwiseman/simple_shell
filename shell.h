@@ -16,15 +16,25 @@
 #define TOK_BUFSIZE 128
 #define TOK_DELIM " \t\r\n\a"
 
+/**
+ * struct data - dat combining various important parameters
+ * @av: argeument vector from the shell being run
+ * @input: input data
+ * @args: arguments gotten from the user
+ * @status: status program exited
+ * @counter: program counter
+ * @_environ: environ variable
+ * @pid: process identifier
+ */
 typedef struct data
 {
-        char **av;
-        char *input;
-        char **args;
-        int status;
-        int counter;
-        char **_environ;
-        char *pid;
+	char **av;
+	char *input;
+	char **args;
+	int status;
+	int counter;
+	char **_environ;
+	char *pid;
 } data_shell;
 
 /* envrn1.c  */
