@@ -1,5 +1,6 @@
 #include "shell.h"
 
+int cd_shell(data_shell *datash);
 /**
  * print_prompt - prints the shell prompt
  * @is_term: indicative if it is interactive or non-interactive
@@ -19,7 +20,7 @@ void print_prompt(int is_term)
  *
  * Return: 0 if no errors otherwise -1
  */
-int execute_command(char *sh_name, char **argv, int count, int *stat)
+int execute_command(char *sh_name, char *argv, int count, int *stat)
 {
 	pid_t pid;
 	int wstatus;
@@ -33,8 +34,8 @@ int execute_command(char *sh_name, char **argv, int count, int *stat)
 	else if (pid == 0)
 	{
 		if ((execve(argv[0], argv, environ)) < 0)
-		{
-			errors(sh_name, argv[0], count);
+		{		
+			_errors(sh_name, argv[0], count);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -48,6 +49,7 @@ int execute_command(char *sh_name, char **argv, int count, int *stat)
 	return (0);
 }
 
+
 /**
  * special_case - handles cases when command is not a relative or absolute path
  * @sh_name: name the shell was called for error printing
@@ -57,7 +59,7 @@ int execute_command(char *sh_name, char **argv, int count, int *stat)
  * Return: 0 if program should continue normally, 1 if loop should be restarted
  * and 2 if loop should be broken (i.e exit)
  */
-int special_case(char *sh_name, char **argv, int count)
+int special_case(char *sh_name, char *argv, int count)
 {
 	char *name;
 	data_shell datash = {sh_name, NULL, argv, 0, count};
@@ -77,12 +79,12 @@ int special_case(char *sh_name, char **argv, int count)
 	name = path(argv[0]);
 	if (name == NULL)
 	{
-		errors(sh_name, argv[0], count);
+		_errors(sh_name, argv[0], count);
 		return (1);
 	}
 	else
 	{
-		free(argv[0]);
+		_free(argv[0]);
 		argv[0] = name;
 	}
 	return (0);
@@ -95,7 +97,7 @@ int special_case(char *sh_name, char **argv, int count)
  *
  * Return: 0 if executes with no error, otherwise 1
  */
-int main(int ac, char **av)
+int main(int ac, char *av)
 {
 	char **argv, *sh_name = av[0], *buffer = (char *) malloc(BUFSIZE);
 	int count = 0, feed, is_term = 1, stat = 0;
