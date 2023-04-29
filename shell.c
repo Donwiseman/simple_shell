@@ -1,6 +1,5 @@
 #include "shell.h"
 
-int cd_shell(data_shell *datash);
 /**
  * print_prompt - prints the shell prompt
  * @is_term: indicative if it is interactive or non-interactive
@@ -34,7 +33,7 @@ int execute_command(char *sh_name, char **argv, int count, int *stat)
 	else if (pid == 0)
 	{
 		if ((execve(argv[0], argv, environ)) < 0)
-		{		
+		{
 			errors(sh_name, argv[0], count);
 			exit(EXIT_FAILURE);
 		}
