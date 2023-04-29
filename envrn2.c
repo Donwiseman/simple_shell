@@ -30,78 +30,76 @@ char *copy_info(char *name, char *value)
  *
  * @name: name of the environment variable
  * @value: value of the environment variable
- * @datash: data structure (environ)
  * Return: no return
  */
-void set_env(char *name, char *value, data_shell *datash)
+void set_env(char *name, char *value)
 {
 	int i;
 	char *var_env, *name_env;
 
-	for (i = 0; datash->_environ[i]; i++)
+	for (i = 0; environ[i]; i++)
 	{
-		var_env = _strdup(datash->_environ[i]);
+		var_env = _strdup(environ[i]);
 		name_env = _strtok(var_env, "=");
 		if (_strcmp(name_env, name) == 0)
 		{
-			free(datash->_environ[i]);
-			datash->_environ[i] = copy_info(name_env, value);
+			environ[i] = copy_info(name_env, value);
 			free(var_env);
 			return;
 		}
 		free(var_env);
 	}
 
-	datash->_environ = _reallocdp(datash->_environ, i, sizeof(char *) * (i + 2));
-	datash->_environ[i] = copy_info(name, value);
-	datash->_environ[i + 1] = NULL;
+	environ = _reallocdp(environ, i, sizeof(char *) * (i + 2));
+	environ[i] = copy_info(name, value);
+	environ[i + 1] = NULL;
 }
 
 /**
  * _setenv - compares env variables names
  * with the name passed.
- * @datash: data relevant (env name and env value)
+ * @args: argument vector
  *
  * Return: 1 on success.
  */
-int _setenv(data_shell *datash)
+int _setenv(char **args)
 {
 
-	if (datash->args[1] == NULL || datash->args[2] == NULL)
+	if (args[1] == NULL || args[2] == NULL)
 	{
-		get_error(datash, -1);
+		errno = EINVAL;
 		return (1);
 	}
 
-	set_env(datash->args[1], datash->args[2], datash);
+	set_env(datash->args[1], datash->args[2]);
 
-	return (1);
+	return (0);
 }
 
 /**
  * _unsetenv - deletes a environment variable
  *
- * @datash: data relevant (env name)
+ * @args: argument vectors
  *
- * Return: 1 on success.
+ * Return: 0 on success.
  */
-int _unsetenv(data_shell *datash)
+int _unsetenv(char **args)
 {
 	char **realloc_environ;
 	char *var_env, *name_env;
 	int i, j, k;
 
-	if (datash->args[1] == NULL)
+	if (args[1] == NULL)
 	{
-		get_error(datash, -1);
+		errno = EINVAL;
 		return (1);
 	}
 	k = -1;
-	for (i = 0; datash->_environ[i]; i++)
+	for (i = 0; environ[i]; i++)
 	{
-		var_env = _strdup(datash->_environ[i]);
+		var_env = _strdup(environ[i]);
 		name_env = _strtok(var_env, "=");
-		if (_strcmp(name_env, datash->args[1]) == 0)
+		if (_strcmp(name_env, args[1]) == 0)
 		{
 			k = i;
 		}
@@ -109,21 +107,19 @@ int _unsetenv(data_shell *datash)
 	}
 	if (k == -1)
 	{
-		get_error(datash, -1);
+		errno = EINVAL;
 		return (1);
 	}
 	realloc_environ = malloc(sizeof(char *) * (i));
-	for (i = j = 0; datash->_environ[i]; i++)
+	for (i = j = 0; environ[i]; i++)
 	{
 		if (i != k)
 		{
-			realloc_environ[j] = datash->_environ[i];
+			realloc_environ[j] = environ[i];
 			j++;
 		}
 	}
 	realloc_environ[j] = NULL;
-	free(datash->_environ[k]);
-	free(datash->_environ);
-	datash->_environ = realloc_environ;
-	return (1);
+	environ = realloc_environ;
+	return (0);
 }

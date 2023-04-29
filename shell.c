@@ -20,7 +20,7 @@ void print_prompt(int is_term)
  *
  * Return: 0 if no errors otherwise -1
  */
-int execute_command(char *sh_name, char *argv, int count, int *stat)
+int execute_command(char *sh_name, char **argv, int count, int *stat)
 {
 	pid_t pid;
 	int wstatus;
@@ -35,7 +35,7 @@ int execute_command(char *sh_name, char *argv, int count, int *stat)
 	{
 		if ((execve(argv[0], argv, environ)) < 0)
 		{		
-			_errors(sh_name, argv[0], count);
+			errors(sh_name, argv[0], count);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -59,32 +59,26 @@ int execute_command(char *sh_name, char *argv, int count, int *stat)
  * Return: 0 if program should continue normally, 1 if loop should be restarted
  * and 2 if loop should be broken (i.e exit)
  */
-int special_case(char *sh_name, char *argv, int count)
+int special_case(char *sh_name, char **argv, int count)
 {
 	char *name;
-	data_shell datash = {sh_name, NULL, argv, 0, count};
 
 	if (_strncmp(argv[0], "exit", 5) == 0)
 		return (2);
 	else if (_strncmp(argv[0], "env", 4) == 0)
 	{
-		_env(&datash);
-		return (1);
-	}
-	else if (_strncmp(argv[0], "cd", 3) == 0)
-	{
-		cd_shell(&datash);
+		_env();
 		return (1);
 	}
 	name = path(argv[0]);
 	if (name == NULL)
 	{
-		_errors(sh_name, argv[0], count);
+		errors(sh_name, argv[0], count);
 		return (1);
 	}
 	else
 	{
-		_free(argv[0]);
+		free(argv[0]);
 		argv[0] = name;
 	}
 	return (0);
@@ -97,7 +91,7 @@ int special_case(char *sh_name, char *argv, int count)
  *
  * Return: 0 if executes with no error, otherwise 1
  */
-int main(int ac, char *av)
+int main(int ac, char **av)
 {
 	char **argv, *sh_name = av[0], *buffer = (char *) malloc(BUFSIZE);
 	int count = 0, feed, is_term = 1, stat = 0;

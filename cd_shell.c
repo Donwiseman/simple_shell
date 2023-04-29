@@ -6,12 +6,12 @@
  * @datash: data relevant
  * Return: 1 on success
  */
-int cd_shell(data_shell *datash)
+int cd_shell(char *pathname)
 {
 	char *dir;
 	int ishome, ishome2, isddash;
 
-	dir = datash->args[1];
+	dir =pathname;
 
 	if (dir != NULL)
 	{
