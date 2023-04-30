@@ -54,16 +54,30 @@ int execute_command(char *sh_name, char **argv, int count, int *stat)
  * @sh_name: name the shell was called for error printing
  * @argv: argument vector
  * @count: pointer to the counter for programs executed by the shell
+ * @stat: status to exit if necessary
  *
  * Return: 0 if program should continue normally, 1 if loop should be restarted
  * and 2 if loop should be broken (i.e exit)
  */
-int special_case(char *sh_name, char **argv, int count)
+int special_case(char *sh_name, char **argv, int count, int *stat)
 {
 	char *name;
+	int status;
 
 	if (_strncmp(argv[0], "exit", 5) == 0)
+	{
+		if (argv[1] != NULL)
+		{
+			status = exit_shell(argv[1]);
+			if (status == -1)
+			{
+				exit_err(sh_name, argv[0], count, argv[1]);
+				return (1);
+			}
+			*stat = status;
+		}
 		return (2);
+	}
 	else if (_strncmp(argv[0], "env", 4) == 0)
 	{
 		_env();
@@ -105,14 +119,14 @@ int main(int ac, char **av)
 		is_term = 0;
 	else
 		write(STDOUT_FILENO, "$ ", 2);
-	while ((getline(&buffer, &n, stdin)) != -1)
+	while ((get_line(&buffer, &n, stdin)) != -1)
 	{
 		argv = token(buffer);
 		if (argv == NULL)
 			continue;
 		if (argv[0][0] != '/' && argv[0][0] != '.')
 		{
-			feed = special_case(sh_name, argv, ++count);
+			feed = special_case(sh_name, argv, ++count, &stat);
 			if (feed == 2)
 			{
 				free_arg(argv);

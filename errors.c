@@ -70,3 +70,43 @@ void errors(char *sh_name, char *command, unsigned int count)
 	free(count_str);
 	perror(err);
 }
+
+/**
+ * exit_err - prints error message to the console
+ * @sh_name: name of the shell being run
+ * @command: name of the command that error occurred in
+ * @count: count of program executed in this shell session
+ * @arg: the exit arg that caused error
+ *
+ * Return: void (nothing)
+ */
+void exit_err(char *sh_name, char *command, unsigned int count, char *arg)
+{
+	char err[BUFSIZE], *count_str = convert_str(count);
+	char err_print[] = "Illegal number: ";
+	unsigned int index;
+	size_t n = 0;
+
+	if (count_str == NULL)
+		exit(EXIT_FAILURE);
+	for (index = 0; sh_name[index] != '\0'; index++)
+		err[n++] = sh_name[index];
+	err[n++] = ':';
+	err[n++] = ' ';
+	for (index = 0; count_str[index] != '\0'; index++)
+		err[n++] = count_str[index];
+	err[n++] = ':';
+	err[n++] = ' ';
+	for (index = 0; command[index] != '\0'; index++)
+		err[n++] = command[index];
+	err[n++] = ':';
+	err[n++] = ' ';
+	for (index = 0; err_print[index] != '\0'; index++)
+		err[n++] = err_print[index];
+	for (index = 0; arg[index] != '\0'; index++)
+		err[n++] = arg[index];
+	err[n++] = '\0';
+	free(count_str);
+	write(STDERR_FILENO, err, n);
+	write(STDERR_FILENO, "\n", 1);
+}

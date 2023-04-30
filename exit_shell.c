@@ -10,51 +10,27 @@
  * the shell status to 0 or 2 and prints an error message. Then it exits the
  * shell using the exit function, with the shell status as the argument.
  *
- * @datash: data relevant to the shell (status and args)
+ * @arg: argument pased to the exit call
  * Return: 0 on success, 1 on error
  */
-int exit_shell(data_shell *datash)
+int exit_shell(char *arg)
 {
-    if (datash == NULL)
-    {
-        /* invalid input, print error message */
-        fprintf(stderr, "exit_shell: datash is NULL\n");
-        return 1;
-    }
+	unsigned int status = 0;
+	int i;
 
-    /* check if there is an argument */
-    if (datash->args[1] != NULL)
-    {
-        /* convert argument to unsigned int */
-        char *arg = datash->args[1];
-        unsigned int status = 0;
-        int i;
+	/* convert argument to unsigned int */
+	for (i = 0; arg[i] != '\0'; i++)
+	{
+		if (arg[i] < '0' || arg[i] > '9')
+			return (-1);
 
-        for (i = 0; arg[i] != '\0'; i++)
-        {
-            if (arg[i] < '0' || arg[i] > '9')
-            {
-                /* invalid input, print error message */
-                fprintf(stderr, "exit_shell: %s: numeric argument required\n", arg);
-                return 1;
-            }
+		/* prevent overflow */
+		if (status > (UINT_MAX - (arg[i] - '0')) / 10)
+			return (-1);
 
-            /* prevent overflow */
-            if (status > (UINT_MAX - (arg[i] - '0')) / 10)
-            {
-                /* invalid input, print error message */
-                fprintf(stderr, "exit_shell: %s: value too large\n", arg);
-                return 1;
-            }
-
-            status = status * 10 + (arg[i] - '0');
-        }
-
-        /* set shell status to remainder of argument modulo 256 */
-        datash->status = status % 256;
-    }
-
-    /* exit the shell */
-    exit(datash->status);
-    return 0; /* never executed */
+		status = status * 10 + (arg[i] - '0');
+	}
+	/* set shell status to remainder of argument modulo 256 */
+	status = status % 256;
+	return (status);
 }

@@ -61,6 +61,8 @@ int _env(void)
 {
 	int i, j;
 
+	if (environ == NULL)
+		return (1);
 	for (i = 0; environ[i]; i++)
 	{
 		for (j = 0; environ[i][j]; j++)
@@ -68,5 +70,5 @@ int _env(void)
 		write(STDOUT_FILENO, environ[i], j);
 		write(STDOUT_FILENO, "\n", 1);
 	}
-	return (1);
+	return (0);
 }

@@ -1,5 +1,4 @@
 #include "shell.h"
-#include <string.h>
 
 /**
  * bring_line - assigns the line var for get_line
@@ -30,7 +29,7 @@ void bring_line(char **lineptr, size_t *n, char *buffer, size_t j)
 	}
 	else
 	{
-		strcpy(*lineptr, buffer);
+		_strcpy(*lineptr, buffer);
 		free(buffer);
 	}
 }

@@ -27,5 +27,9 @@ void free_arg(char **argv);
 void errors(char *sh_name, char *command, unsigned int count);
 char *path(char *filename);
 int _strncmp(char *s1, char *s2, int n);
+char *_strcpy(char *dest, char *src);
+ssize_t get_line(char **lineptr, size_t *n, FILE *stream);
+void exit_err(char *sh_name, char *command, unsigned int count, char *arg);
+int exit_shell(char *arg);
 
 #endif
