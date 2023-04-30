@@ -105,6 +105,7 @@ void exit_err(char *sh_name, char *command, unsigned int count, char *arg)
 		err[n++] = err_print[index];
 	for (index = 0; arg[index] != '\0'; index++)
 		err[n++] = arg[index];
+	err[n++] = ' ';
 	err[n++] = '\0';
 	free(count_str);
 	write(STDERR_FILENO, err, n);
