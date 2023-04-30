@@ -72,6 +72,7 @@ int special_case(char *sh_name, char **argv, int count, int *stat)
 			if (status == -1)
 			{
 				exit_err(sh_name, argv[0], count, argv[1]);
+				*stat = 2;
 				return (1);
 			}
 			*stat = status;
